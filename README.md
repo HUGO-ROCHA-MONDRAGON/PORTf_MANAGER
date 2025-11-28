@@ -62,3 +62,63 @@ The goal was to design a compact, reusable, object-oriented financial engine sim
 ## Architecture
 The solution is composed of four independent .NET projects:
 
+Pricing.Core – Financial engine (options, strategies, pricers, portfolio)
+Pricing.CLI – Market data (Twelve Data API, basket builder)
+Pricing.WPF – User interface (guided workflow, expert mode, charts)
+Pricing.Tests – xUnit test suite (pricing, Greeks, baskets, structures)
+
+
+### Object-Oriented Design
+- Abstract classes: `Option`, `Strategy`
+- Interfaces: `IPricingMethod`
+- Concrete implementations: `CallOption`, `PutOption`, spreads, straddle…
+- Portfolio aggregation for multi-leg strategies
+- Swappable pricers via polymorphism
+
+---
+
+## Financial Models
+
+### Black–Scholes Pricer
+- Continuous dividend yield
+- Greeks computed analytically
+- Stability checks and bounded inputs
+
+### Monte Carlo Pricer
+- Log-normal paths  
+- Discounted expected payoff  
+- Greeks via bump-and-revalue  
+
+### Basket Construction
+- Weighted average of spot and dividends  
+- Volatility computed from aggregated returns  
+- Full correlation matrix included  
+
+---
+
+## User Modes
+
+### Beginner Mode
+- Guided interface for non-specialists
+- Simple objectives: moderate rise, fall, volatility, stability
+- Automatic selection of appropriate option strategies
+
+### Expert Mode
+- Full control over legs, strikes, maturities, and quantities
+- Strategy recognition and detailed analytics
+- Monte Carlo optional run
+
+---
+
+## Unit Tests
+More than 50 tests ensure correctness and stability:
+
+- Black–Scholes parity and monotonicity  
+- Consistency between Monte Carlo and analytical pricing  
+- Structure detection (spreads, straddles, condors, etc.)  
+- Portfolio aggregation and payoff export  
+- Basket normalization and correlation handling  
+
+Run all tests:
+```bash
+dotnet test
