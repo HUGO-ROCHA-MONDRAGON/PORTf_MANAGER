@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green)]()
 [![Tests](https://img.shields.io/badge/Tests-xUnit-informational)]()
 
-A complete option-pricing and strategy analysis engine developed in C# during the first semester of the **Master 272 – Financial Engineering** at **Université Paris Dauphine–PSL**.
+A complete option-pricing and strategy analysis engine developed in C# during the first semester of the second year of my Masters at Dauphine-PSL.
 
 This project integrates real-market data, a modular financial engine, a WPF graphical interface, Monte Carlo simulation, and more than 50 unit tests to ensure robustness.
 
@@ -122,3 +122,4 @@ More than 50 tests ensure correctness and stability:
 Run all tests:
 ```bash
 dotnet test
+
