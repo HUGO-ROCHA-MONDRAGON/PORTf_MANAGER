@@ -1,0 +1,490 @@
+<Window x:Class="Pricing.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ScottPlot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF"
+        mc:Ignorable="d"
+        Title="Plateforme de Pricing d'Options Financières" 
+        Height="800" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F5F5">
+    
+    <Window.Resources>
+        <!-- Style pour créer des boutons modernes avec des coins arrondis et un effet de survol -->
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="#2196F3"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="5" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1976D2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background" Value="#757575"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#616161"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CardPanel" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#CCCCCC" Direction="270" ShadowDepth="2" Opacity="0.3" BlurRadius="8"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TitleText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#212121"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <Style x:Key="SubtitleText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#424242"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Barre bleue qui affiche le titre de l'application et les informations sur l'API -->
+        <Border Grid.Row="0" Background="#1976D2" Padding="20,15">
+            <StackPanel>
+                <TextBlock Text="Plateforme de Pricing d'Options Financières" 
+                          FontSize="22" 
+                          FontWeight="Bold" 
+                          Foreground="White"/>
+                <TextBlock Text="Données de marché réelles via Twelve Data API" 
+                          FontSize="12" 
+                          Foreground="#BBDEFB" 
+                          Margin="0,5,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Zone de contenu principal avec défilement vertical pour afficher toutes les étapes du workflow -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20">
+            <StackPanel x:Name="MainContent">
+                
+                <!-- Première étape: Configuration de la clé API pour récupérer les données de marché réelles -->
+                <Border x:Name="ApiKeyPanel" Style="{StaticResource CardPanel}" Visibility="Visible">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TitleText}" Text="Étape 1 : Configuration de la clé API"/>
+                        
+                        <TextBlock TextWrapping="Wrap" FontSize="14" Foreground="#616161" Margin="0,0,0,20">
+                            Cette application utilise des <Bold>données de marché réelles</Bold> pour le pricing d'options.
+                            <LineBreak/><LineBreak/>
+                             <Bold>Aucun mode fictif/démo n'est disponible</Bold> - toutes les données proviennent de l'API Twelve Data.
+                        </TextBlock>
+
+                        <!-- Zone de saisie de la clé API avec instructions pour l'obtenir gratuitement -->
+                        <Border Background="#E3F2FD" CornerRadius="5" Padding="15" Margin="0,0,0,20">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtitleText}" Text=" Clé API Twelve Data" Foreground="#1976D2" Margin="0,0,0,10"/>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#424242" Margin="0,0,0,10">
+                                    Entrez votre clé API gratuite Twelve Data (800 requêtes/jour).
+                                    <LineBreak/>
+                                    Obtenez-la sur : https://twelvedata.com/pricing (Sign Up - Basic Free)
+                                </TextBlock>
+                                
+                                <TextBox x:Name="ApiKeyInput" 
+                                        FontSize="14" 
+                                        Padding="10" 
+                                        BorderBrush="#2196F3" 
+                                        BorderThickness="2"
+                                        Background="White"
+                                        Margin="0,0,0,10"
+                                        TextChanged="ApiKeyInput_TextChanged"/>
+                                
+                                <TextBlock x:Name="ApiKeyStatus" 
+                                          FontSize="11" 
+                                          Foreground="#757575" 
+                                          TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel HorizontalAlignment="Center" Margin="0,20,0,0">
+                            <Button x:Name="BtnContinueToProfile" 
+                                    Content="Continuer vers le choix du profil" 
+                                    Style="{StaticResource ModernButton}" 
+                                    Width="300"
+                                    IsEnabled="False"
+                                    Click="BtnContinueToProfile_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Deuxieme etape : Choix entre le mode Non-avise (débutant) et avsise (expert) avec explications détaillées -->
+                <Border x:Name="ProfilePanel" Style="{StaticResource CardPanel}" Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TitleText}" Text="Étape 2 : Choix du profil investisseur"/>
+                        
+                        <TextBlock TextWrapping="Wrap" FontSize="14" Foreground="#616161" Margin="0,0,0,20">
+                            Choisissez votre niveau de connaissance en options financières.
+                            <LineBreak/>
+                            Ce choix déterminera le type d'interface et de guidage que vous recevrez.
+                        </TextBlock>
+
+                        <!-- Explication du mode Non-avise : approche simplifiee basee sur des objectifs financiers -->
+                        <Border Background="#E8F5E9" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtitleText}" Text="Investisseur NON-AVISÉ (Débutant)" Foreground="#388E3C"/>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="13" Foreground="#424242" Margin="0,0,0,10">
+                                    <Bold>Pour qui ?</Bold> Vous découvrez les options ou n'êtes pas familier avec les termes techniques.
+                                </TextBlock>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="13" Foreground="#424242" Margin="0,0,0,10">
+                                    <Bold>Comment ça marche ?</Bold>
+                                    <LineBreak/>
+                                    • Vous définissez des <Bold>objectifs financiers simples</Bold> (ex: "profiter d'une hausse modérée")
+                                    <LineBreak/>
+                                    • L'application traduit automatiquement vos objectifs en <Bold>stratégies d'options</Bold>
+                                    <LineBreak/>
+                                    • Vous allouez un % de capital à chaque objectif (max 3 objectifs)
+                                    <LineBreak/>
+                                    • Pas besoin de connaître strikes, grecques ou Delta !
+                                </TextBlock>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#2E7D32">
+                                    Guidage étape par étape, Vocabulaire simplifié, Stratégies automatiques
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Explication du mode avise : construction manuelle avec paramètres techniques avancés -->
+                        <Border Background="#E3F2FD" CornerRadius="5" Padding="15" Margin="0,0,0,20">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtitleText}" Text="Investisseur AVISÉ (Expert)" Foreground="#1976D2"/>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="13" Foreground="#424242" Margin="0,0,0,10">
+                                    <Bold>Pour qui ?</Bold> Vous maîtrisez les concepts d'options (strike, maturité, grecques, Delta, etc.).
+                                </TextBlock>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="13" Foreground="#424242" Margin="0,0,0,10">
+                                    <Bold>Comment ça marche ?</Bold>
+                                    <LineBreak/>
+                                    • Construction <Bold>manuelle</Bold> de vos positions (Call/Put, Long/Short)
+                                    <LineBreak/>
+                                    • Choix précis des <Bold>strikes, maturités, quantités</Bold>
+                                    <LineBreak/>
+                                    • Analyse complète : Black-Scholes, Monte Carlo, toutes les grecques
+                                    <LineBreak/>
+                                    • Détection automatique des produits structurés (spreads, straddles, etc.)
+                                </TextBlock>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#0D47A1">
+                                    Contrôle total, Analyses avancées, Multi-options (jusqu'à 4)
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <Button x:Name="BtnBackToApi" 
+                                    Content="Retour" 
+                                    Style="{StaticResource SecondaryButton}" 
+                                    Width="120"
+                                    Click="BtnBackToApi_Click"/>
+                            <Button x:Name="BtnNonAvise" 
+                                    Content="Mode NON-AVISÉ" 
+                                    Style="{StaticResource ModernButton}" 
+                                    Width="200" 
+                                    Click="BtnNonAvise_Click"/>
+                            <Button x:Name="BtnAvise" 
+                                    Content="Mode AVISÉ" 
+                                    Style="{StaticResource ModernButton}" 
+                                    Width="200" 
+                                    Click="BtnAvise_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Troisième étape: Explication du concept d'ETF virtuel avant la sélection des secteurs -->
+                <Border x:Name="EtfExplanationPanel" Style="{StaticResource CardPanel}" Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TitleText}" Text="Construction de votre sous-jacent"/>
+                        
+                        <TextBlock TextWrapping="Wrap" FontSize="14" Foreground="#616161" Margin="0,0,0,20">
+                            Les options financières portent sur un <Bold>sous-jacent</Bold> (action, ETF, indice, etc.).
+                            <LineBreak/><LineBreak/>
+                            Cette plateforme vous permet de créer un <Bold>ETF virtuel personnalisé</Bold> basé sur des données réelles.
+                        </TextBlock>
+
+                        <!-- Option 1 : Créer des options sur une seule action (volatilité plus élevée) -->
+                        <Border Background="#FFF3E0" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtitleText}" Text="Option 1 : Action Unique" Foreground="#E65100"/>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="13" Foreground="#424242" Margin="0,0,0,10">
+                                    Choisissez <Bold>1 seul secteur</Bold> → Options sur une action unique (ex: AAPL)
+                                </TextBlock>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#BF360C">
+                                    • Prix, volatilité, dividendes = données réelles de cette action
+                                    <LineBreak/>
+                                    • Simple et direct
+                                    <LineBreak/>
+                                    • Volatilité plus élevée (pas de diversification)
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Option 2 : Créer un ETF virtuel diversifié sur plusieurs secteurs (volatilité réduite) -->
+                        <Border Background="#E8EAF6" CornerRadius="5" Padding="15" Margin="0,0,0,20">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtitleText}" Text="Option 2 : ETF Virtuel Multi-Secteurs" Foreground="#3F51B5"/>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="13" Foreground="#424242" Margin="0,0,0,10">
+                                    Choisissez <Bold>plusieurs secteurs</Bold> (2 à 4) → Création d'un ETF diversifié
+                                </TextBlock>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#1A237E" Margin="0,0,0,10">
+                                    <Bold>Comment ça marche ?</Bold>
+                                    <LineBreak/>
+                                    1. Vous sélectionnez 2 à 4 secteurs (ex: Tech + Santé + Finance)
+                                    <LineBreak/>
+                                    2. L'application télécharge les données réelles de chaque action
+                                    <LineBreak/>
+                                    3. Calcul du prix ETF = moyenne pondérée des prix réels
+                                    <LineBreak/>
+                                    4. Calcul de la volatilité ETF = volatilité du panier (corrélations incluses !)
+                                    <LineBreak/>
+                                    5. Dividendes ETF = moyenne pondérée des dividendes réels
+                                </TextBlock>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#283593">
+                                    <Bold>Avantages :</Bold>
+                                    <LineBreak/>
+                                    • <Bold>Volatilité réduite</Bold> grâce à la diversification
+                                    <LineBreak/>
+                                    • <Bold>Réplique les ETF réels</Bold> (SPY, QQQ, etc.)
+                                    <LineBreak/>
+                                    • Options moins chères (σ plus faible)
+                                    <LineBreak/>
+                                    • Risque mieux réparti entre secteurs
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#FFFDE7" CornerRadius="5" Padding="15" Margin="0,0,0,20">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtitleText}" Text="Pourquoi cela a un sens économique ?" Foreground="#F57F17"/>
+                                
+                                <TextBlock TextWrapping="Wrap" FontSize="13" Foreground="#424242">
+                                    Les ETF réels (SPY, QQQ, IWM) fonctionnent exactement comme ça :
+                                    <LineBreak/>
+                                    • Un panier d'actions avec des poids définis
+                                    <LineBreak/>
+                                    • Prix de l'ETF = somme pondérée des prix des composants
+                                    <LineBreak/>
+                                    • Volatilité réduite par les corrélations non-parfaites
+                                    <LineBreak/><LineBreak/>
+                                    Ici, vous créez votre propre "mini-ETF" avec les secteurs de votre choix !
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <Button x:Name="BtnContinueToSectors" 
+                                    Content="Continuer vers la sélection des secteurs" 
+                                    Style="{StaticResource ModernButton}" 
+                                    Width="350"
+                                    Click="BtnContinueToSectors_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Panneau de workflow interactif : guide l'utilisateur étape par étape avec questions/réponses -->
+                <Border x:Name="WorkflowPanel" Style="{StaticResource CardPanel}" Visibility="Collapsed">
+                    <StackPanel>
+                        <!-- Messages de statut pour indiquer l'étape en cours et les actions nécessaires -->
+                        <TextBlock x:Name="StatusText" 
+                                  FontSize="14" 
+                                  Foreground="#1976D2" 
+                                  TextWrapping="Wrap" 
+                                  Margin="0,0,0,15"/>
+
+                        <!-- Zone de saisie pour les réponses de l'utilisateur aux questions du workflow -->
+                        <Border Background="#F5F5F5" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+                            <StackPanel>
+                                        <!-- Aide contextuelle courte avec lien pour afficher plus de détails si nécessaire -->
+                                        <StackPanel x:Name="ShortHelpPanel" Orientation="Horizontal" Margin="0,0,0,8" Visibility="Collapsed">
+                                            <TextBlock x:Name="ShortHelpText" Text="Aide : tapez le(s) numéro(s) de l'objectif (ex : 1,4). " FontSize="12" Foreground="#424242" VerticalAlignment="Center"/>
+                                            <TextBlock FontSize="12" VerticalAlignment="Center">
+                                                <Hyperlink x:Name="HelpToggleLink" Click="HelpToggleLink_Click">En savoir plus</Hyperlink>
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <!-- Aide détaillée sur les objectifs financiers disponibles (remplie automatiquement) -->
+                                        <!-- Aperçu des données de marché pour les utilisateurs avancés lors de la sélection des paramètres d'options -->
+                                        <Border x:Name="MarketPreviewBorder" Background="#E3F2FD" CornerRadius="5" Padding="8" Margin="0,0,0,8" Visibility="Collapsed">
+                                            <TextBlock x:Name="MarketPreviewText" FontSize="13" Foreground="#424242" TextWrapping="Wrap"/>
+                                        </Border>
+                                        <Border x:Name="ObjectiveHelpBorder" Background="#FFFDE7" CornerRadius="5" Padding="10" Margin="0,0,0,10" Visibility="Collapsed">
+                                            <TextBlock x:Name="ObjectiveHelpText" TextWrapping="Wrap" FontSize="13" Foreground="#424242"/>
+                                        </Border>
+                                <TextBlock x:Name="QuestionText" 
+                                          FontSize="16" 
+                                          FontWeight="SemiBold" 
+                                          TextWrapping="Wrap" 
+                                          Margin="0,0,0,10"/>
+                                
+                                <TextBox x:Name="InputBox" 
+                                        FontSize="14" 
+                                        Padding="10" 
+                                        BorderBrush="#BDBDBD" 
+                                        BorderThickness="1"
+                                        Background="White"
+                                        KeyDown="InputBox_KeyDown"/>
+                                
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <Button x:Name="BtnSubmit" 
+                                            Content="Valider" 
+                                            Style="{StaticResource ModernButton}" 
+                                            Width="120"
+                                            Click="BtnSubmit_Click"/>
+                                    <Button x:Name="BtnCancel" 
+                                            Content="Annuler" 
+                                            Style="{StaticResource SecondaryButton}" 
+                                            Width="120"
+                                            Click="BtnCancel_Click"
+                                            Visibility="Collapsed"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Journal d'historique : affiche toutes les étapes complétées et les choix effectués -->
+                        <TextBlock Text="Historique des étapes" Style="{StaticResource SubtitleText}" Margin="0,10,0,10"/>
+                        <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="5" MaxHeight="250">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <TextBlock x:Name="HistoryLog" 
+                                          FontFamily="Consolas" 
+                                          FontSize="12" 
+                                          Padding="10" 
+                                          TextWrapping="Wrap"
+                                          Foreground="#424242"/>
+                            </ScrollViewer>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Panneau de résultats : affiche toutes les analyses, prix, grecques et graphiques de payoff -->
+                <Border x:Name="ResultsPanel" Style="{StaticResource CardPanel}" Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TitleText}" Text="Résultats de l'Analyse"/>
+                        
+                        <!-- Résumé des données de marché récupérées : prix spot, volatilité, taux, dividendes -->
+                        <Border Background="#E3F2FD" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtitleText}" Text="Données de Marché" Foreground="#1976D2"/>
+                                <TextBlock x:Name="MarketDataText" FontSize="13" TextWrapping="Wrap" Foreground="#424242"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Métriques du portefeuille : prix Black-Scholes, Monte-Carlo et détails par option -->
+                        <Border Background="#F3E5F5" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtitleText}" Text="Métriques du Portefeuille" Foreground="#7B1FA2"/>
+                                <TextBlock x:Name="PortfolioMetricsText" FontSize="13" TextWrapping="Wrap" Foreground="#424242"/>
+
+                                <!-- Tableau détaillé par option : prix Black-Scholes, grecques individuelles et montants totaux -->
+                                <DataGrid x:Name="OptionDetailsGrid" AutoGenerateColumns="False" CanUserAddRows="False" Margin="0,8,0,8" Height="160">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="50"/>
+                                        <DataGridTextColumn Header="Strike" Binding="{Binding Strike, StringFormat=N2}" Width="80"/>
+                                        <DataGridTextColumn Header="Pos." Binding="{Binding Position}" Width="70"/>
+                                        <DataGridTextColumn Header="Qty" Binding="{Binding Qty}" Width="60"/>
+                                        <DataGridTextColumn Header="Prix BS (contrat)" Binding="{Binding PricePerContract, StringFormat=N8}" Width="120"/>
+                                        <DataGridTextColumn Header="Total (€)" Binding="{Binding LineTotal, StringFormat=N2}" Width="110"/>
+                                        <DataGridTextColumn Header="Δ" Binding="{Binding Delta, StringFormat=N4}" Width="80"/>
+                                        <DataGridTextColumn Header="Γ" Binding="{Binding Gamma, StringFormat=N4}" Width="80"/>
+                                        <DataGridTextColumn Header="ν" Binding="{Binding Vega, StringFormat=N4}" Width="80"/>
+                                        <DataGridTextColumn Header="θ" Binding="{Binding Theta, StringFormat=N4}" Width="80"/>
+                                        <DataGridTextColumn Header="ρ" Binding="{Binding Rho, StringFormat=N4}" Width="80"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <!-- Contrôles Monte-Carlo : saisie du nombre de simulations et bouton de lancement du calcul -->
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="Monte-Carlo :" VerticalAlignment="Center" FontSize="13" Foreground="#424242" Margin="0,0,6,0"/>
+                                    <TextBox x:Name="McSimsInput" Width="120" Text="50000" FontSize="13" Padding="6" Margin="0,0,6,0" />
+                                    <Button x:Name="BtnRunMC" Content="Calculer MC" Width="120" Click="BtnRunMC_Click" Style="{StaticResource ModernButton}" />
+                                    <TextBlock x:Name="McStatusText" FontSize="12" Foreground="#616161" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+
+                                <TextBlock x:Name="McPriceText" FontSize="13" TextWrapping="Wrap" Foreground="#424242" Margin="0,8,0,0" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Grecques du portefeuille : sensibilités totales (Delta, Gamma, Vega, Theta, Rho) -->
+                        <Border Background="#E8F5E9" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtitleText}" Text="Grecques (Sensibilités)" Foreground="#388E3C"/>
+                                <TextBlock x:Name="GreeksText" FontSize="13" TextWrapping="Wrap" Foreground="#424242"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Graphique de payoff : visualisation du profit/perte à maturité selon différents prix du sous-jacent -->
+                        <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="5" Padding="15">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtitleText}" Text="Graphique de Payoff à Maturité"/>
+                                <Border Height="300" Background="#FAFAFA" Margin="0,10,0,0">
+                                    <ScottPlot:WpfPlot x:Name="PayoffPlot" />
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Boutons d'action : exporter les résultats en CSV ou recommencer une nouvelle simulation -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                            <Button x:Name="BtnExportCSV" 
+                                    Content="Exporter CSV" 
+                                    Style="{StaticResource ModernButton}" 
+                                    Width="150"
+                                    Click="BtnExportCSV_Click"/>
+                            <Button x:Name="BtnNewSimulation" 
+                                    Content="Nouvelle Simulation" 
+                                    Style="{StaticResource ModernButton}" 
+                                    Width="180"
+                                    Click="BtnNewSimulation_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

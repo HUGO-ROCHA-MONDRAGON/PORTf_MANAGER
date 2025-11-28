@@ -1,0 +1,12 @@
+﻿<!-- Fichier de configuration de l'application WPF pour le projet Pricing -->
+<!-- Définit la classe App et la fenêtre de démarrage principale -->
+<Application x:Class="Pricing.WPF.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Pricing.WPF"
+             StartupUri="MainWindow.xaml">
+    <!-- Ressources globales de l'application (styles, templates, etc.) -->
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>
