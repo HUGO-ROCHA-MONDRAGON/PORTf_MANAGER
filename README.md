@@ -4,17 +4,6 @@ A complete option-pricing and strategy analysis engine developed in C# during th
 
 This project integrates real-market data, a modular financial engine, a WPF graphical interface, Monte Carlo simulation, and more than 50 unit tests to ensure robustness.
 
-
-## Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Financial Models](#financial-models)
-- [User Modes](#user-modes)
-- [Unit Tests](#unit-tests)
-- [Limitations and Next Steps](#limitations-and-next-steps)
-- [Technologies](#technologies)
-
 ## Overview
 This project implements a full workflow for pricing European equity options and structured option strategies.  
 It retrieves market data (spot, volatility, dividends, correlations) from the Twelve Data API and exposes two user paths:
@@ -106,4 +95,5 @@ More than 50 tests ensure correctness and stability:
 - Structure detection (spreads, straddles, condors, etc.)  
 - Portfolio aggregation and payoff export  
 - Basket normalization and correlation handling  
+
 
