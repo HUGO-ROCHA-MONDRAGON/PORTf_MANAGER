@@ -1,14 +1,9 @@
 # Option Pricing and Structured Strategies Engine (C# / .NET)
-[![.NET](https://img.shields.io/badge/.NET-8.0-blue)]()
-[![WPF](https://img.shields.io/badge/UI-WPF-blueviolet)]()
-[![License](https://img.shields.io/badge/License-MIT-green)]()
-[![Tests](https://img.shields.io/badge/Tests-xUnit-informational)]()
 
 A complete option-pricing and strategy analysis engine developed in C# during the first semester of the second year of my Masters at Dauphine-PSL.
 
 This project integrates real-market data, a modular financial engine, a WPF graphical interface, Monte Carlo simulation, and more than 50 unit tests to ensure robustness.
 
----
 
 ## Table of Contents
 - [Overview](#overview)
@@ -20,8 +15,6 @@ This project integrates real-market data, a modular financial engine, a WPF grap
 - [Limitations and Next Steps](#limitations-and-next-steps)
 - [Technologies](#technologies)
 
----
-
 ## Overview
 This project implements a full workflow for pricing European equity options and structured option strategies.  
 It retrieves market data (spot, volatility, dividends, correlations) from the Twelve Data API and exposes two user paths:
@@ -31,7 +24,6 @@ It retrieves market data (spot, volatility, dividends, correlations) from the Tw
 
 The goal was to design a compact, reusable, object-oriented financial engine similar to what is used on real trading or asset-management desks.
 
----
 
 ## Features
 
@@ -57,7 +49,6 @@ The goal was to design a compact, reusable, object-oriented financial engine sim
 - Aggregated Greeks.
 - CSV export.
 
----
 
 ## Architecture
 The solution is composed of four independent .NET projects:
@@ -75,7 +66,6 @@ Pricing.Tests – xUnit test suite (pricing, Greeks, baskets, structures)
 - Portfolio aggregation for multi-leg strategies
 - Swappable pricers via polymorphism
 
----
 
 ## Financial Models
 
@@ -94,7 +84,6 @@ Pricing.Tests – xUnit test suite (pricing, Greeks, baskets, structures)
 - Volatility computed from aggregated returns  
 - Full correlation matrix included  
 
----
 
 ## User Modes
 
@@ -108,7 +97,6 @@ Pricing.Tests – xUnit test suite (pricing, Greeks, baskets, structures)
 - Strategy recognition and detailed analytics
 - Monte Carlo optional run
 
----
 
 ## Unit Tests
 More than 50 tests ensure correctness and stability:
@@ -118,8 +106,4 @@ More than 50 tests ensure correctness and stability:
 - Structure detection (spreads, straddles, condors, etc.)  
 - Portfolio aggregation and payoff export  
 - Basket normalization and correlation handling  
-
-Run all tests:
-```bash
-dotnet test
 
